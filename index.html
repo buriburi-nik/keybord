@@ -29,17 +29,18 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 100vw;
+            width: 100%;
+            padding: 20px;
         }
 
         .message {
             font-size: 24px;
             font-weight: 600;
-            width: 600px;
+            max-width: 100%;
             color: #333;
             margin-bottom: 20px;
             background: #fff;
-            padding: 20px 40px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
         }
@@ -49,7 +50,8 @@
         }
 
         .keycode {
-            width: 200px;
+            width: 100%;
+            max-width: 200px;
             font-size: 96px;
             font-weight: 600;
             color: #4caf50;
@@ -58,6 +60,10 @@
             border-radius: 12px;
             box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
             margin-bottom: 20px;
+        }
+
+        .mobile-input {
+            display: none;
         }
 
         .history-btn {
@@ -78,7 +84,7 @@
 
         .history {
             margin-top: 20px;
-            width: 600px;
+            max-width: 100%;
             max-height: 200px;
             overflow-y: auto;
             background: #fff;
@@ -89,6 +95,42 @@
             font-size: 16px;
             display: none;
         }
+
+        @media (max-width: 600px) {
+            .message {
+                font-size: 18px;
+                padding: 15px;
+            }
+
+            .keycode {
+                font-size: 72px;
+                padding: 15px 0;
+            }
+
+            .mobile-input {
+                display: block;
+            width: 100%;
+            max-width: 600px;
+            font-size: 14px;
+            padding: 10px;
+            margin: 20px 0;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        
+
+            }
+
+            .history-btn {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+
+            .history {
+                font-size: 14px;
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 
@@ -98,6 +140,7 @@
             You pressed <span>-</span>
         </div>
         <div class="keycode">-</div>
+        <input type="text" class="mobile-input" placeholder="Type here on mobile" oninput="handleMobileInput(event)">
         <button class="history-btn" onclick="toggleHistory()">Show History</button>
         <div class="history" id="history"></div>
     </div>
@@ -110,12 +153,11 @@
         const historyDiv = document.getElementById('history');
         const sound = document.getElementById('keypress-sound');
         const keyHistory = [];
-        let isHistoryVisible = false; 
+        let isHistoryVisible = false;
 
         document.addEventListener('keydown', (event) => {
             const { key, keyCode, ctrlKey, shiftKey, altKey, metaKey } = event;
 
-        
             sound.currentTime = 0;
             sound.play();
 
@@ -134,6 +176,21 @@
 
             keyHistory.push(`Key: ${displayKey}, Code: ${keyCode}`);
         });
+
+        function handleMobileInput(event) {
+            const key = event.target.value.slice(-1); // Get the last entered character
+            const keyCode = key ? key.charCodeAt(0) : '-';
+
+            sound.currentTime = 0;
+            sound.play();
+
+            messageSpan.textContent = key || '-';
+            keycodeBox.textContent = keyCode || '-';
+
+            if (key) {
+                keyHistory.push(`Key: ${key}, Code: ${keyCode}`);
+            }
+        }
 
         function toggleHistory() {
             isHistoryVisible = !isHistoryVisible;
