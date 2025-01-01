@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keycode Keyboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+        }
+
+        .message {
+            font-size: 24px;
+            font-weight: 600;
+            width: 600px;
+            color: #333;
+            margin-bottom: 20px;
+            background: #fff;
+            padding: 20px 40px;
+            border-radius: 12px;
+            box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .message span {
+            color: #4caf50;
+        }
+
+        .keycode {
+            width: 200px;
+            font-size: 96px;
+            font-weight: 600;
+            color: #4caf50;
+            background: #fff;
+            padding: 20px 0;
+            border-radius: 12px;
+            box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .history-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            background-color: #4caf50;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .history-btn:hover {
+            background-color: #45a049;
+        }
+
+        .history {
+            margin-top: 20px;
+            width: 600px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.1);
+            text-align: left;
+            font-size: 16px;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="message">
+            You pressed <span>-</span>
+        </div>
+        <div class="keycode">-</div>
+        <button class="history-btn" onclick="toggleHistory()">Show History</button>
+        <div class="history" id="history"></div>
+    </div>
+
+    <audio id="keypress-sound" src="https://www.myinstants.com/media/sounds/pika-pika.mp3"></audio>
+
+    <script>
+        const messageSpan = document.querySelector('.message span');
+        const keycodeBox = document.querySelector('.keycode');
+        const historyDiv = document.getElementById('history');
+        const sound = document.getElementById('keypress-sound');
+        const keyHistory = [];
+        let isHistoryVisible = false; 
+
+        document.addEventListener('keydown', (event) => {
+            const { key, keyCode, ctrlKey, shiftKey, altKey, metaKey } = event;
+
+        
+            sound.currentTime = 0;
+            sound.play();
+
+            const keys = [];
+            if (ctrlKey) keys.push('Ctrl');
+            if (shiftKey) keys.push('Shift');
+            if (altKey) keys.push('Alt');
+            if (metaKey) keys.push('Meta');
+            if (key !== 'Control' && key !== 'Shift' && key !== 'Alt' && key !== 'Meta') keys.push(key);
+
+            const combination = keys.join(' + ');
+            const displayKey = key === ' ' ? 'Space' : combination;
+
+            messageSpan.textContent = displayKey;
+            keycodeBox.textContent = keyCode;
+
+            keyHistory.push(`Key: ${displayKey}, Code: ${keyCode}`);
+        });
+
+        function toggleHistory() {
+            isHistoryVisible = !isHistoryVisible;
+
+            if (isHistoryVisible) {
+                if (keyHistory.length === 0) {
+                    historyDiv.innerHTML = '<p>No keys pressed yet.</p>';
+                } else {
+                    historyDiv.innerHTML = keyHistory.map(item => `<p>${item}</p>`).join('');
+                }
+                historyDiv.style.display = 'block';
+            } else {
+                historyDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+
+</html>
